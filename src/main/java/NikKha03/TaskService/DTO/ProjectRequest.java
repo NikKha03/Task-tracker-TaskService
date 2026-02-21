@@ -17,6 +17,6 @@ public class ProjectRequest {
     private ProjectType projectType;
 
     // username пользователя из keycloak, который создает проект
-    private String principalUser;
+    private String userKeycloakId;
 
 }

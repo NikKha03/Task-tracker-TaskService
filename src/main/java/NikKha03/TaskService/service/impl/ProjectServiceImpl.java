@@ -41,7 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project();
         project.setName(request.getName());
         if (!request.getProjectType().equals(ProjectType.COMPANY)) {
-            project.setProjectOwner(projectOwnerRepository.findByUsername(request.getPrincipalUser()));
+            project.setProjectOwner(projectOwnerRepository.findByKeycloakId(request.getUserKeycloakId()));
         } else {
             project.setProjectOwner(projectOwnerRepository.findById(request.getProjectOwner()).orElse(null));
         }
@@ -51,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
         // Добавляем создателя к участникам проекта
         UserInProject userInProject = new UserInProject();
         userInProject.setProject(project);
-        userInProject.setUsername(request.getPrincipalUser());
+        userInProject.setKeycloakId(request.getUserKeycloakId());
         List<RolesInProject> roles = new ArrayList<>();
         // Добавляю роли: CREATOR, ADMIN, MEMBER
         roles.add(rolesInProjectRepository.findById(1L).orElse(null));
@@ -87,12 +87,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity<?> inviteInProject(String username, Long projectId) {
+    public ResponseEntity<?> inviteInProject(String keycloakId, Long projectId) {
         Project project = repository.findById(projectId).orElse(null);
 
         UserInProject invitedUser = new UserInProject();
         invitedUser.setProject(project);
-        invitedUser.setUsername(username);
+        invitedUser.setKeycloakId(keycloakId);
         List<RolesInProject> roles = new ArrayList<>();
         // Добавляю роль MEMBER
         roles.add(rolesInProjectRepository.findById(3L).orElse(null));
@@ -124,14 +124,14 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity<Project> getProject(Long id, String username) {
+    public ResponseEntity<Project> getProject(Long id, String keycloakId) {
         Project project = repository.findById(id).orElse(null);
         boolean isMember = false;
 
         if (project != null) {
             List<UserInProject> team = project.getTeam();
             for (UserInProject userInProject : team) {
-                if (userInProject.getUsername().equals(username))
+                if (userInProject.getKeycloakId().equals(keycloakId))
                     isMember = true;
             }
         } else {

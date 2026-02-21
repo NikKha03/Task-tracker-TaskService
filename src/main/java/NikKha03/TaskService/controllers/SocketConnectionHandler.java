@@ -1,4 +1,4 @@
-package NikKha03.TaskService.component;
+package NikKha03.TaskService.controllers;
 
 import NikKha03.TaskService.model.WebSocketUser;
 import org.springframework.stereotype.Component;
@@ -13,51 +13,51 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** https://www.geeksforgeeks.org/springboot/spring-boot-web-socket/ */
+/**
+ * https://www.geeksforgeeks.org/springboot/spring-boot-web-socket/
+ */
 @Component
 public class SocketConnectionHandler extends TextWebSocketHandler {
-    /** Список, который хранит в себе соединения с websocket
-     * TODO может быть заменен на redis */
-    List<WebSocketSession> webSocketSessions = Collections.synchronizedList(new ArrayList<>());
+    /* Массив WebSocketUser по projectId */
+    private final Map<Long, Set<WebSocketUser>> socketUsersByProjectId = new ConcurrentHashMap<>();
 
-    private final Map<Long, Set<WebSocketUser>> projectToUser = new ConcurrentHashMap<>();
-    private final Map<String, WebSocketUser> sessionToUser = new ConcurrentHashMap<>();
+    /* WebSocketUser по sessionId */
+    private final Map<String, WebSocketUser> socketUsersBySessionId = new ConcurrentHashMap<>();
 
-
+    /* Метод при подключении клиента */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         Map<String, String> params = extractParamsFromSession(session);
-        WebSocketUser socketUser = new WebSocketUser(Long.parseLong(params.get("projectId")), "", session);
-        sessionToUser.put(session.getId(), socketUser);
+        WebSocketUser socketUser = new WebSocketUser(Long.parseLong(params.get("projectId")), params.get("keycloakId"), session);
+        socketUsersBySessionId.put(session.getId(), socketUser);
+        socketUsersByProjectId.computeIfAbsent(Long.parseLong(params.get("projectId")), k -> ConcurrentHashMap.newKeySet()).add(socketUser); // добавляем сеанс
 
         super.afterConnectionEstablished(session);
-        projectToUser.computeIfAbsent(Long.parseLong(params.get("projectId")), k -> ConcurrentHashMap.newKeySet()).add(socketUser); // добавляем сеанс
-        System.out.println("WebSocket connected: " + session.getId());
+        System.out.println("WebSocket connected! KeycloakUserId: " + socketUser.getKeycloakId());
     }
 
+    /* Метод при отключении клиента */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        WebSocketUser socketUser = sessionToUser.get(session.getId());
-        sessionToUser.remove(session.getId());
-
-        super.afterConnectionClosed(session, status);
-        projectToUser.computeIfPresent(socketUser.getProjectId(), (id, users) -> {
+        WebSocketUser socketUser = socketUsersBySessionId.get(session.getId());
+        socketUsersBySessionId.remove(session.getId());
+        socketUsersByProjectId.computeIfPresent(socketUser.getProjectId(), (id, users) -> {
             users.remove(socketUser); // удаляем пользователя
             return users.isEmpty() ? null : users; // если множество пустое → убираем ключ совсем
         });
-        System.out.println("WebSocket disconnected: " + session.getId());
+
+        super.afterConnectionClosed(session, status);
+        System.out.println("WebSocket disconnected! KeycloakUserId: " + socketUser.getKeycloakId());
     }
 
+    /* Метод отправки сообщения */
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         super.handleMessage(session, message);
-        WebSocketUser socketUser = sessionToUser.get(session.getId());
-        System.out.println(sessionToUser);
-
-        Set<WebSocketUser> users = projectToUser.get(socketUser.getProjectId());
+        WebSocketUser socketUser = socketUsersBySessionId.get(session.getId());
+        Set<WebSocketUser> users = socketUsersByProjectId.get(socketUser.getProjectId());
 
         users.forEach(user -> {
-            // скорее всего самому себе тоже надо будет отправлять
             if (user.getSession() != session) {
                 try {
                     user.getSession().sendMessage(message);
@@ -66,6 +66,8 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 }
             }
         });
+
+        // TODO надо делать запрос в БД, что бы глобально сохранить данные или делать это через клиент
     }
 
     private Map<String, String> extractParamsFromSession(WebSocketSession session) {
@@ -86,7 +88,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     }
 
     public void handleData(String sessionId, String data) throws Exception {
-        WebSocketUser socketUser = this.sessionToUser.get(sessionId);
+        WebSocketUser socketUser = this.socketUsersBySessionId.get(sessionId);
         handleMessage(socketUser.getSession(), new TextMessage(data));
     }
 }

@@ -1,6 +1,6 @@
 package NikKha03.TaskService.config;
 
-import NikKha03.TaskService.component.SocketConnectionHandler;
+import NikKha03.TaskService.controllers.SocketConnectionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

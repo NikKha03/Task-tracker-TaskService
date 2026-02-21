@@ -1,7 +1,6 @@
 package NikKha03.TaskService.controllers;
 
 import NikKha03.TaskService.DTO.TaskRequest;
-import NikKha03.TaskService.component.SocketConnectionHandler;
 import NikKha03.TaskService.model.Task;
 import NikKha03.TaskService.model.TaskStatus;
 import NikKha03.TaskService.service.TaskService;

@@ -40,10 +40,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<?> getByTab(Long projectId, Long tabId, String username) {
+    public ResponseEntity<?> getByTab(Long projectId, Long tabId, String keycloakId) {
         Project project = projectRepository.findById(projectId).orElse(null);
         boolean isMember = !project.getTeam().stream()
-                .filter(member -> member.getUsername().equals(username)).toList().isEmpty();
+                .filter(member -> member.getKeycloakId().equals(keycloakId)).toList().isEmpty();
         // проверяю является ли пользователь участником проекта по вкладке
         if (isMember) {
             Map<String, Object> response = new HashMap<>();

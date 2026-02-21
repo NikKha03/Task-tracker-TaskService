@@ -12,7 +12,7 @@ public class ProjectOwner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ownerId;
+    private Long id;
 
     @OneToMany(mappedBy = "projectOwner")
     private List<Project> projects;

@@ -12,9 +12,6 @@ import java.util.List;
 public class User extends ProjectOwner {
 
     @NotNull
-    String username;
-
-    @NotNull
     String keycloakId;
 
     @ManyToMany(mappedBy = "employees")

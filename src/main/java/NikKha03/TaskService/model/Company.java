@@ -18,7 +18,7 @@ public class Company extends ProjectOwner {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "employees_companies",
+            name = "employees_company",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id"))
     List<User> employees;

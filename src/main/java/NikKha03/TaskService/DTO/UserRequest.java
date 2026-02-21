@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter
 public class UserRequest {
 
-    private String userId;
-
-    private String username;
+    private String keycloakId;
 
 }

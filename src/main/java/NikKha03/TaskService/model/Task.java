@@ -23,11 +23,11 @@ public class Task {
 
     private String comment;
 
-    // кто создал задачу (username пользователя, полученный из keycloak)
+    // кто создал задачу (id пользователя, полученный из keycloak)
     @NotNull
     private String creator;
 
-    // кто выполнил задачу (username пользователя, полученный из keycloak)
+    // кто выполнил задачу (id пользователя, полученный из keycloak)
     private String implementer;
 
     @NotNull

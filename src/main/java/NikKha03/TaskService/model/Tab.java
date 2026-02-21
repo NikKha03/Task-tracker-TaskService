@@ -21,7 +21,7 @@ public class Tab {
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "project", nullable = false)
+    @JoinColumn(name = "projectId", nullable = false)
     @JsonIgnore
     private Project project;
 

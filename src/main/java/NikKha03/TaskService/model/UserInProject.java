@@ -17,12 +17,12 @@ public class UserInProject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // username пользователя, полученное из keycloak
+    // id пользователя, полученное из keycloak
     @NotNull
-    private String username;
+    private String keycloakId;
 
     @ManyToOne()
-    @JoinColumn(name = "project", nullable = false)
+    @JoinColumn(name = "projectId", nullable = false)
     @JsonIgnore()
     private Project project;
 
@@ -32,13 +32,5 @@ public class UserInProject {
             joinColumns = @JoinColumn(name = "user_in_project_id"),
             inverseJoinColumns = @JoinColumn(name = "role_in_project_id"))
     private List<RolesInProject> roles = new ArrayList<>();
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JsonIgnore()
-//    @JoinTable(
-//            name = "user_projects",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "project_id"))
-//    private List<Project> projects = new ArrayList<>();
 
 }
