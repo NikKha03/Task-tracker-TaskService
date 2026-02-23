@@ -62,6 +62,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<Task> getTasksByStatus(Long projectId, String status) {
+        return mapper.getTasksByProjectIdAndStatus(projectId, status);
+    }
+
+    @Override
     public List<Task> getInProgressTasks(String implementer) {
         List<Task> tasks = mapper.getTasksByImplementerAndStatus(implementer, TaskStatus.IN_PROGRESS.toString());
         return tasks.stream()
@@ -171,7 +176,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task setStatus(Long taskId, TaskStatus status, boolean resetExecutionDate) {
-        // TODO Переписать на чистый SQL
         Task task = repository.findById(taskId).orElse(null);
         if (task == null) return null;
 
@@ -184,6 +188,11 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskStatus(status);
 
         return repository.save(task);
+    }
+
+    @Override
+    public void setPause(Long taskId, Boolean value) {
+        mapper.updateIsPause(taskId, value);
     }
 
     /*

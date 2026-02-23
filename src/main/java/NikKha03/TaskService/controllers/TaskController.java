@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,11 +20,8 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    private final SocketConnectionHandler websocket;
-
     public TaskController(TaskService taskService, SocketConnectionHandler websocket) {
         this.taskService = taskService;
-        this.websocket = websocket;
     }
 
     /*
@@ -87,6 +85,12 @@ public class TaskController {
         return taskService.getTasksIncomplete(implementer);
     }
 
+    // Получить задачи из бэклога
+    @GetMapping("/backlogTasks")
+    public List<Task> getBacklogTasks(@RequestParam("projectId") Long projectId) {
+        return taskService.getTasksByStatus(projectId, TaskStatus.IN_BACKLOG.toString());
+    }
+
     @PostMapping("/create/{creator}")
     public ResponseEntity<?> createTask(@PathVariable("creator") String creator, @RequestBody TaskRequest request) {
         return taskService.createTask(creator, request);
@@ -117,6 +121,17 @@ public class TaskController {
     @PutMapping("/setStatusOnAwaitingCompletion/{taskId}")
     public Task setStatusOnAwaitingCompletion(@PathVariable("taskId") Long taskId) {
         return taskService.setStatus(taskId, TaskStatus.AWAITING_COMPLETION, true);
+    }
+
+    @PutMapping("/setStatusOnBacklog/{taskId}")
+    public Task setStatusOnBacklog(@PathVariable("taskId") Long taskId) {
+        return taskService.setStatus(taskId, TaskStatus.IN_BACKLOG, true);
+    }
+
+    // Изменить статус "Паузы" задачи
+    @PutMapping("/setPause/{taskId}")
+    public void setPause(@PathVariable("taskId") Long taskId, @RequestParam("value") Boolean value) {
+        taskService.setPause(taskId, value);
     }
 
 }

@@ -31,16 +31,16 @@ public class OriginFilter implements Filter {
         String origin = httpRequest.getScheme() + "://" + httpRequest.getHeader("Host");
         String gatewaySecret = httpRequest.getHeader("gateway-secret");
 
-        if (ALLOWED_ORIGIN.contains(origin) && GATEWAY_SECRET.equals(gatewaySecret)) {
-            chain.doFilter(request, response); // Пропускаем запрос
-        } else {
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.sendError(403);
-            logger.warn("Запрос с неопознанного источника. Origin: " + origin + ", has gateway-secret: " + !Objects.isNull(gatewaySecret));
-        }
+//        if (ALLOWED_ORIGIN.contains(origin) && GATEWAY_SECRET.equals(gatewaySecret)) {
+//            chain.doFilter(request, response); // Пропускаем запрос
+//        } else {
+//            HttpServletResponse httpResponse = (HttpServletResponse) response;
+//            httpResponse.sendError(403);
+//            logger.warn("Запрос с неопознанного источника. Origin: " + origin + ", has gateway-secret: " + !Objects.isNull(gatewaySecret));
+//        }
 
         // На время разработки
-        // chain.doFilter(request, response); // Пропускаем запрос
+         chain.doFilter(request, response); // Пропускаем запрос
 
     }
 

@@ -49,6 +49,8 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus;
 
+    private Boolean isPause = false;
+
     private String tags;
 
     private String urlsObj;
