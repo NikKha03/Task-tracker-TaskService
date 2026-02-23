@@ -1,9 +1,10 @@
 package NikKha03.TaskService.controllers;
 
 import NikKha03.TaskService.model.WebSocketUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -18,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 public class SocketConnectionHandler extends TextWebSocketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(SocketConnectionHandler.class);
+
     /* Массив WebSocketUser по projectId */
     private final Map<Long, Set<WebSocketUser>> socketUsersByProjectId = new ConcurrentHashMap<>();
 
@@ -33,7 +36,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         socketUsersByProjectId.computeIfAbsent(Long.parseLong(params.get("projectId")), k -> ConcurrentHashMap.newKeySet()).add(socketUser); // добавляем сеанс
 
         super.afterConnectionEstablished(session);
-        System.out.println("WebSocket connected! KeycloakUserId: " + socketUser.getKeycloakId());
+        logger.info("WebSocket connected! KeycloakUserId: " + socketUser.getKeycloakId() + ", projectId: " + socketUser.getProjectId());
     }
 
     /* Метод при отключении клиента */
@@ -47,10 +50,14 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         });
 
         super.afterConnectionClosed(session, status);
-        System.out.println("WebSocket disconnected! KeycloakUserId: " + socketUser.getKeycloakId());
+        logger.info("WebSocket disconnected! KeycloakUserId: " + socketUser.getKeycloakId() + ", projectId: " + socketUser.getProjectId());
     }
 
-    /* Метод отправки сообщения */
+    /**
+     * Метод отправки сообщения
+     * Через сокет клиенты обмениваются данными, полученные данные в сокете никак не обрабатываются.
+     * Изменения данных в БД инициирует клиент.
+     **/
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         super.handleMessage(session, message);
@@ -66,8 +73,6 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 }
             }
         });
-
-        // TODO надо делать запрос в БД, что бы глобально сохранить данные или делать это через клиент
     }
 
     private Map<String, String> extractParamsFromSession(WebSocketSession session) {
@@ -87,8 +92,4 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         return paramsMap;
     }
 
-    public void handleData(String sessionId, String data) throws Exception {
-        WebSocketUser socketUser = this.socketUsersBySessionId.get(sessionId);
-        handleMessage(socketUser.getSession(), new TextMessage(data));
-    }
 }

@@ -6,8 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-// web socket connections is handled
-// by this class
+// Класс для обработки WS соединений
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
@@ -19,18 +18,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
         this.websocket = websocket;
     }
 
-    // Overriding a method which register the socket
-    // handlers into a Registry
+    // Переопределение метода, который регистрирует обработчики сокетов в реестре
     @Override
     public void registerWebSocketHandlers(
-            WebSocketHandlerRegistry webSocketHandlerRegistry)
-    {
-        // For adding a Handler we give the Handler class we
-        // created before with End point Also we are managing
-        // the CORS policy for the handlers so that other
-        // domains can also access the socket
+            WebSocketHandlerRegistry webSocketHandlerRegistry) {
+
         webSocketHandlerRegistry
-                .addHandler(websocket,"/hello")
+                .addHandler(websocket, "/socket-by-project-id")
                 .setAllowedOrigins("*");
     }
 }

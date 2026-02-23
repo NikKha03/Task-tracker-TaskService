@@ -36,13 +36,7 @@ public class TaskController {
     @GetMapping("/byTab/{tabId}")
     public ResponseEntity<?> getByTab(@PathVariable("tabId") Long tabId,
                                       @RequestParam("projectId") Long projectId,
-                                      @RequestParam("username") String username,
-                                      @RequestParam("testSocketId") String testSocketId) {
-        try {
-            websocket.handleData(testSocketId, taskService.getByTab(projectId, tabId, username).toString());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+                                      @RequestParam("username") String username) {
         return taskService.getByTab(projectId, tabId, username);
     }
 

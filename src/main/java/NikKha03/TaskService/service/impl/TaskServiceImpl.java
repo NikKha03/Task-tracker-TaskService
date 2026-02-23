@@ -114,8 +114,7 @@ public class TaskServiceImpl implements TaskService {
                 .setCreationDate()
                 .setTaskStatus(request.getTaskStatus())
                 .setUrlsObj(request.getUrlsObj())
-                .setTag(request.getTags())
-                ;
+                .setTag(request.getTags());
 
         if (request.getTaskStatus() == TaskStatus.COMPLETED) {
             taskBuilder.setExecutionDate(LocalDateTime.now());
@@ -148,8 +147,7 @@ public class TaskServiceImpl implements TaskService {
                 .setComment(request.getComment())
                 .setImplementer(request.getImplementer())
                 .setUrlsObj(request.getUrlsObj())
-                .setTag(request.getTags())
-                ;
+                .setTag(request.getTags());
 
         if (task.getTaskStatus() != TaskStatus.COMPLETED && request.getTaskStatus() == TaskStatus.COMPLETED) {
             taskBuilder.setExecutionDate(LocalDateTime.now());
