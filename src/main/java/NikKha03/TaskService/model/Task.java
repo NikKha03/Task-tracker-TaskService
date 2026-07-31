@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -27,8 +28,8 @@ public class Task {
     @NotNull
     private String creator;
 
-    // кто выполнил задачу (id пользователя, полученный из keycloak)
-    private String implementer;
+    // исполнитель у задачи (id пользователя, полученный из keycloak)
+    private List<String> implementers;
 
     @NotNull
     @ManyToOne()
@@ -54,5 +55,8 @@ public class Task {
     private String tags;
 
     private String urlsObj;
+
+    @OneToMany(mappedBy = "task")
+    private List<Subtasks> subtasks;
 
 }

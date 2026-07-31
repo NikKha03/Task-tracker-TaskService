@@ -109,12 +109,11 @@ public class TaskServiceImpl implements TaskService {
         // TODO Не нравится, что надо доставать вкладку из бд
         Tab tab = tabRepository.findById(request.getTabId()).orElse(null);
 
-        // TODO Добавить сохранение исполнителя
+        // TODO Добавить создание исполнителя
         TaskBuilder taskBuilder = new TaskBuilder()
                 .setHeader(request.getHeader())
                 .setComment(request.getComment())
                 .setCreator(creator)
-                .setImplementer(request.getImplementer())
                 .setTab(tab)
                 .setCreationDate()
                 .setTaskStatus(request.getTaskStatus())
@@ -150,7 +149,6 @@ public class TaskServiceImpl implements TaskService {
         TaskBuilder taskBuilder = new TaskBuilder(task)
                 .setHeader(request.getHeader())
                 .setComment(request.getComment())
-                .setImplementer(request.getImplementer())
                 .setUrlsObj(request.getUrlsObj())
                 .setTag(request.getTags());
 

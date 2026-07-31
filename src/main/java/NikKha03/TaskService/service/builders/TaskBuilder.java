@@ -5,17 +5,23 @@ import NikKha03.TaskService.model.Task;
 import NikKha03.TaskService.model.TaskStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TaskBuilder {
     private final Task task;
 
+    private List<String> implementers;
+
     public TaskBuilder() {
         this.task = new Task();
+        this.implementers = new ArrayList<>();
     }
 
     public TaskBuilder(Task task) {
         this.task = task;
+        this.implementers = task.getImplementers();
     }
 
     public TaskBuilder setHeader(String header) {
@@ -33,8 +39,13 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder setImplementer(String implementer) {
-        task.setImplementer(implementer);
+    public TaskBuilder setImplementers(List<String> implementers) {
+        this.implementers = implementers;
+        return this;
+    }
+
+    public TaskBuilder addImplementer(String implementer) {
+        this.implementers.add(implementer);
         return this;
     }
 
@@ -67,6 +78,7 @@ public class TaskBuilder {
         task.setUrlsObj(urlsObj);
         return this;
     }
+
     public TaskBuilder setTag(String tag) {
         task.setTags(tag);
         return this;
@@ -74,6 +86,7 @@ public class TaskBuilder {
 
 
     public Task build() {
+        task.setImplementers(this.implementers);
         return task;
     }
 }
