@@ -25,7 +25,7 @@ public class JsonbConverter implements AttributeConverter<Map<String, Object>, S
     @Override
     public Map<String, Object> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) {
-            return new HashMap<>(); // или просто return null, если тебе так удобнее
+            return new HashMap<>();
         }
         try {
             return objectMapper.readValue(dbData, HashMap.class);

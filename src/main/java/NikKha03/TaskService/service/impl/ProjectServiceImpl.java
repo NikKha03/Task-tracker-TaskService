@@ -6,6 +6,7 @@ import NikKha03.TaskService.model.*;
 import NikKha03.TaskService.repository.*;
 import NikKha03.TaskService.service.ProjectService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository repository;
@@ -22,15 +24,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserInProjectRepository userInProjectRepository;
     private final TabRepository tabRepository;
     private final RolesInProjectRepository rolesInProjectRepository;
-
-    public ProjectServiceImpl(ProjectRepository repository, ProjectOwnerRepository projectOwnerRepository, UserInProjectRepository userInProjectRepository, TabRepository tabRepository, RolesInProjectRepository rolesInProjectRepository, ProjectMapper projectMapper) {
-        this.repository = repository;
-        this.projectOwnerRepository = projectOwnerRepository;
-        this.userInProjectRepository = userInProjectRepository;
-        this.tabRepository = tabRepository;
-        this.rolesInProjectRepository = rolesInProjectRepository;
-        this.mapper = projectMapper;
-    }
 
     @Override
     public ResponseEntity<?> createProject(ProjectRequest request) {
@@ -108,6 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> kickedOut(String username, Long projectId) {
         mapper.deleteUserRolesFromProject(projectId, username);
         mapper.deleteUserFromProject(projectId, username);
@@ -118,8 +112,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void deleteProject(Long projectId) {
-//        userRepository.deleteByProject(projectId);
-//        tabRepository.deleteByProject(projectId);
         repository.deleteById(projectId);
     }
 
@@ -154,14 +146,5 @@ public class ProjectServiceImpl implements ProjectService {
     public ResponseEntity<List<Project>> getOtherProjects(String username) {
         return ResponseEntity.ok(repository.getOtherProjects(username));
     }
-
-//    @Override
-//    public ResponseEntity<?> getProjectsWithRole(String username, String role) {
-//        return switch (role) {
-//            case "participant" -> ResponseEntity.ok(repository.getProjectsWithRole(username, ProjectRole.Participant.toString()));
-//            case "VIEWER" -> ResponseEntity.ok(repository.getProjectsWithRole(username, ProjectRole.Observer.toString()));
-//            default -> null;
-//        };
-//    }
 
 }

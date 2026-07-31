@@ -1,7 +1,6 @@
 package NikKha03.TaskService.controllers;
 
 import NikKha03.TaskService.DTO.TabRequest;
-import NikKha03.TaskService.model.Tab;
 import NikKha03.TaskService.service.TabService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +39,5 @@ public class TabController {
     public void deleteTab(@PathVariable("tabId") Long tabId) {
         tabService.deleteTab(tabId);
     }
-
 
 }

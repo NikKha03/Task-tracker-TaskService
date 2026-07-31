@@ -13,7 +13,6 @@ import java.util.List;
 public class User extends ProjectOwner {
 
     // получаю данные пользователя из keycloak
-
     @NotNull
     String username;
 

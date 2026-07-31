@@ -1,7 +1,6 @@
 package NikKha03.TaskService.service;
 
 import NikKha03.TaskService.DTO.TabRequest;
-import NikKha03.TaskService.model.Tab;
 import org.springframework.http.ResponseEntity;
 
 public interface TabService {

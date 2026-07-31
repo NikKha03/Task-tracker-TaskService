@@ -48,7 +48,6 @@ public class TaskServiceImpl implements TaskService {
         if (isMember) {
             Map<String, Object> response = new HashMap<>();
             response.put(TaskStatus.AWAITING_COMPLETION.toString(), mapper.getTasksByTabAndStatus(tabId, "AWAITING_COMPLETION"));
-            response.put(TaskStatus.WITHOUT_DATE_IMPL.toString(), mapper.getTasksByTabAndStatus(tabId, "WITHOUT_DATE_IMPL"));
             response.put(TaskStatus.IN_PROGRESS.toString(), mapper.getTasksByTabAndStatus(tabId, "IN_PROGRESS"));
             response.put(TaskStatus.COMPLETED.toString(), mapper.getTasksByTabAndStatus(tabId, "COMPLETED"));
             return ResponseEntity.ok(response);
@@ -65,10 +64,6 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> getInProgressTasks(String implementer) {
         List<Task> tasks = mapper.getTasksByImplementerAndStatus(implementer, TaskStatus.IN_PROGRESS.toString());
         return tasks.stream()
-                .filter(task -> task.getDeadline() != null
-                        // && task.getDeadline().toLocalDate().isAfter(LocalDate.now()) ||
-                        // (task.getDeadline().toLocalDate().isEqual(LocalDate.now()))
-                )
                 .sorted(Comparator.comparing(Task::getDeadline).thenComparing(Task::getCreationDate))
                 .toList();
     }

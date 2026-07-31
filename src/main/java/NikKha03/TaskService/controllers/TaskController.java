@@ -24,9 +24,9 @@ public class TaskController {
     }
 
     /*
-    Есть задачи, которые запрашиваю по userId,
-    а есть те, которые можно запросить и по userId и по categoryId!!!
-    Поэтому, один из параметров может быть null!
+        Есть задачи, которые запрашиваю по userId,
+        а есть те, которые можно запросить и по userId и по categoryId!
+        Поэтому, один из параметров может быть null!
     */
 
     // задачи по канбан-доске
@@ -42,10 +42,7 @@ public class TaskController {
     public List<Task> getAwaitingCompletionTasks(@RequestParam String implementer) {
         List<Task> tasks = taskService.getTasksByStatus(implementer, TaskStatus.AWAITING_COMPLETION.toString());
         return tasks.stream()
-                .filter(task -> task.getDeadline() != null
-                        // && (LocalDate.now().isBefore(task.getDeadline().toLocalDate())
-                        // || LocalDate.now().isEqual(task.getDeadline().toLocalDate()))
-                )
+                .filter(task -> task.getDeadline() != null)
                 .sorted(Comparator.comparing(Task::getDeadline).thenComparing(Task::getCreationDate))
                 .toList();
     }
@@ -54,10 +51,7 @@ public class TaskController {
     @GetMapping("/withoutDateImplTasks")
     public List<Task> getTaskWithoutDateImpl(@RequestParam String implementer) {
         List<Task> tasks1 = taskService.getTasksByStatus(implementer, TaskStatus.AWAITING_COMPLETION.toString());
-        List<Task> tasks2 = taskService.getTasksByStatus(implementer, TaskStatus.IN_PROGRESS.toString());
-        tasks2.addAll(tasks1);
-
-        return tasks2.stream()
+        return tasks1.stream()
                 .filter(task -> task.getDeadline() == null)
                 .sorted(Comparator.comparing(Task::getCreationDate))
                 .toList();
