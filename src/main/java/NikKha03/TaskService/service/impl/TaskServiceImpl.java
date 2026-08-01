@@ -64,7 +64,7 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> getInProgressTasks(String implementer) {
         List<Task> tasks = mapper.getTasksByImplementerAndStatus(implementer, TaskStatus.IN_PROGRESS.toString());
         return tasks.stream()
-                .sorted(Comparator.comparing(Task::getDeadline).thenComparing(Task::getCreationDate))
+                .sorted(Comparator.comparing(Task::getDeadline, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getCreationDate))
                 .toList();
     }
 
